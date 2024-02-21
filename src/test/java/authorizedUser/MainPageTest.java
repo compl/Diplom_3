@@ -1,9 +1,12 @@
 package authorizedUser;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openqa.selenium.html5.LocalStorage;
+import org.openqa.selenium.html5.WebStorage;
 import ru.practicum.yandex.api.User;
 import ru.practicum.yandex.api.UserClient;
 import ru.practicum.yandex.pages.LoginPage;
@@ -22,6 +25,7 @@ public class MainPageTest {
     @Rule
     public DriverRule driverRule = new DriverRule();
     private MainPage mainPage;
+    private String accessToken;
 
     @Before
     public void loginUser() {
@@ -34,6 +38,14 @@ public class MainPageTest {
 
         mainPage = loginPage.clickLogInButton();
         mainPage.waitForLoadMainPage();
+
+        LocalStorage localStorage = ((WebStorage) driverRule.getDriver()).getLocalStorage();
+        accessToken = localStorage.getItem("accessToken");
+    }
+
+    @After
+    public void deleteUser() {
+       client.delete(accessToken);
     }
 
     @Test
